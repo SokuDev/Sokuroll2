@@ -19,6 +19,9 @@ struct PlayersInputs
     SokuLib::KeyInput inputsP2;
 };
 
+/**
+ * A Savestate is the frame with all the data to be recorded, so that it can be loaded after.
+ */
 class Savestate
 {
 public:
@@ -26,10 +29,14 @@ public:
 
     void readInputs();
     void readFrame();
+    void readWeather();
 
 private:
     unsigned int m_frame;
     PlayersInputs *m_savedInputs;
+    SokuLib::Weather m_weather;
+    SokuLib::Weather m_weatherDisplayed;
+    unsigned short m_weatherCounter;
 };
 
 

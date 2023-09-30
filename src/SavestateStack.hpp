@@ -9,6 +9,9 @@
 
 #include <vector>
 
+/**
+ * The SavestateStack is a list of Savestates, from which we can select which Savestate to compare and to load.
+ */
 class SavestateStack
 {
 public:

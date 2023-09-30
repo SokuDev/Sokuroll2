@@ -10,6 +10,7 @@ Savestate::Savestate()
 {
     readFrame();
     readInputs();
+    readWeather();
 }
 
 void Savestate::readFrame()
@@ -24,4 +25,11 @@ void Savestate::readInputs()
     PlayersInputs *playersInputs = new PlayersInputs();
     playersInputs->inputsP1 = battleManager.leftCharacterManager.keyMap;
     playersInputs->inputsP2 = battleManager.rightCharacterManager.keyMap;
+}
+
+void Savestate::readWeather()
+{
+    m_weather = SokuLib::activeWeather;
+    m_weatherDisplayed = SokuLib::displayedWeather;
+    m_weatherCounter = SokuLib::weatherCounter;
 }

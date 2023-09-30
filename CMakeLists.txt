@@ -26,6 +26,10 @@ add_library(
         MODULE
         src/main.cpp
         src/version.rc
+        src/Savestate.cpp
+        src/Savestate.hpp
+        src/SavestateStack.cpp
+        src/SavestateStack.hpp
 )
 target_compile_options("${PROJECT_NAME}" PRIVATE /Zi)
 target_compile_definitions("${PROJECT_NAME}" PRIVATE DIRECTINPUT_VERSION=0x0800 CURL_STATICLIB _CRT_SECURE_NO_WARNINGS $<$<CONFIG:Debug>:_DEBUG>)

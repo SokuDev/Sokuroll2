@@ -3,6 +3,9 @@
 //
 
 #include <SokuLib.hpp>
+
+#include "SavestateStack.hpp"
+
 #include <iostream>
 
 static bool init = false;
@@ -11,58 +14,20 @@ static int (SokuLib::BattleManager::*ogBattleMgrOnProcess)();
 
 static void (SokuLib::BattleManager::*ogBattleMgrOnRender)();
 
-static SokuLib::DrawUtils::Sprite text;
-static SokuLib::SWRFont font;
-
-namespace
-{
-    SokuLib::KeyInput readCharacterInputs(SokuLib::CharacterManager &characterManager)
-    {
-        return characterManager.keyMap;
-    }
-}
-
 int __fastcall CBattleManager_OnRender(SokuLib::BattleManager *This)
 {
     (This->*ogBattleMgrOnRender)();
-    text.draw();
     return 0;
 }
 
-/**
- * Holds the inputs of both players at a given moment.
- * Each member of KeyInput holds the time for which a button (directions A B C D Sw Sp) have been held.
- */
-struct PlayersInputs
-{
-    SokuLib::KeyInput inputsP1;
-    SokuLib::KeyInput inputsP2;
-};
-
-struct SaveState
-{
-    unsigned int frame;
-    std::vector<PlayersInputs *> savedInputs;
-};
-SaveState savestate;
+SavestateStack savestateStack;
 
 int __fastcall CBattleManager_OnProcess(SokuLib::BattleManager *This)
 {
     if (SokuLib::mainMode == SokuLib::BATTLE_MODE_PRACTICE || SokuLib::mainMode == SokuLib::BATTLE_MODE_VSPLAYER ||
         SokuLib::mainMode == SokuLib::BATTLE_MODE_VSSERVER)
     {
-        SokuLib::BattleManager battleManager = SokuLib::getBattleMgr();
-        PlayersInputs *playersInputs = new PlayersInputs();
-        playersInputs->inputsP1 = ::readCharacterInputs(battleManager.leftCharacterManager);
-        playersInputs->inputsP2 = ::readCharacterInputs(battleManager.rightCharacterManager);
-
-        savestate.savedInputs.push_back(playersInputs);
-        savestate.frame = battleManager.frameCount;
-
-        if (savestate.savedInputs.size() > 10) // magic number
-        {
-            savestate.savedInputs.erase(savestate.savedInputs.begin());
-        }
+        savestateStack.addSavestate();
     }
 
     return (This->*ogBattleMgrOnProcess)();

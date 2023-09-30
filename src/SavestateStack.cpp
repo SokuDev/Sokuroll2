@@ -3,7 +3,6 @@
 //
 
 #include "SavestateStack.hpp"
-#include <iostream>
 
 void SavestateStack::addSavestate()
 {
@@ -12,4 +11,19 @@ void SavestateStack::addSavestate()
     {
         m_savestates.erase(m_savestates.begin());
     }
+}
+
+Savestate &SavestateStack::getSavestate(unsigned int index)
+{
+    if (index + 1 > m_savestates.size())
+    {
+        throw std::runtime_error("Accessing index out of range.");
+    }
+
+    return *m_savestates[index];
+}
+
+const int SavestateStack::getSize() const
+{
+    return m_savestates.size();
 }

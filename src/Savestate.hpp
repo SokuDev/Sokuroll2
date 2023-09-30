@@ -27,12 +27,16 @@ class Savestate
 public:
     Savestate();
 
-    void readInputs();
-    void readFrame();
+    void readInputs(const SokuLib::BattleManager &battleManager);
+    void readFrame(const SokuLib::BattleManager &battleManager);
     void readWeather();
 
+    const unsigned int getFrame() const;
+
+    void restore();
+
 private:
-    unsigned int m_frame;
+    unsigned int m_frame; // Gets reset to 0 when the fight scene changes (see struct BattleManager_VTABLE)
     PlayersInputs *m_savedInputs;
     SokuLib::Weather m_weather;
     SokuLib::Weather m_weatherDisplayed;

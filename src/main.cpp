@@ -7,8 +7,37 @@
 #include "SavestateStack.hpp"
 
 #include <iostream>
+#include <map>
 
 static bool init = false;
+
+namespace
+{
+    SavestateStack savestateStack;
+
+    bool pressKey(int key)
+    {
+        static std::map<int, bool> heldKeys;
+        if (heldKeys.end() == heldKeys.find(key))
+        {
+            heldKeys.insert({key, false});
+        }
+
+        if (false == heldKeys.at(key) && GetAsyncKeyState(key) & 0x8000)
+        {
+            heldKeys.at(key) = true;
+            return true;
+        }
+        else
+        {
+            if (!(GetAsyncKeyState(key) & 0x8000))
+            {
+                heldKeys.at(key) = false;
+            }
+            return false;
+        }
+    }
+}
 
 static int (SokuLib::BattleManager::*ogBattleMgrOnProcess)();
 
@@ -20,14 +49,28 @@ int __fastcall CBattleManager_OnRender(SokuLib::BattleManager *This)
     return 0;
 }
 
-SavestateStack savestateStack;
-
 int __fastcall CBattleManager_OnProcess(SokuLib::BattleManager *This)
 {
-    if (SokuLib::mainMode == SokuLib::BATTLE_MODE_PRACTICE || SokuLib::mainMode == SokuLib::BATTLE_MODE_VSPLAYER ||
-        SokuLib::mainMode == SokuLib::BATTLE_MODE_VSSERVER)
+    switch (SokuLib::mainMode)
     {
-        savestateStack.addSavestate();
+        case SokuLib::BATTLE_MODE_PRACTICE:
+            if (::pressKey(VK_DIVIDE))
+            {
+                savestateStack.addSavestate();
+                std::cout << "Save" << std::endl;
+            }
+            if (::pressKey(VK_MULTIPLY))
+            {
+                if (0 < savestateStack.getSize())
+                {
+                    savestateStack.getSavestate(savestateStack.getSize() - 1).restore();
+                    std::cout << "Restore" << std::endl;
+                }
+            }
+            break;
+        case SokuLib::BATTLE_MODE_VSPLAYER:
+        case SokuLib::BATTLE_MODE_VSSERVER:
+            break;
     }
 
     return (This->*ogBattleMgrOnProcess)();

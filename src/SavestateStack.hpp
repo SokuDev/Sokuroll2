@@ -16,6 +16,8 @@ class SavestateStack
 {
 public:
     void addSavestate();
+    Savestate &getSavestate(unsigned int index);
+    const int getSize() const;
 
 private:
     int m_maxSaves = 10;

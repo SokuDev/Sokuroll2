@@ -7,6 +7,7 @@
 Savestate::Savestate()
 {
     SokuLib::BattleManager battleManager = SokuLib::getBattleMgr();
+    readCamera();
     readFrame(battleManager);
     readInputs(battleManager);
     readWeather();
@@ -15,6 +16,11 @@ Savestate::Savestate()
 void Savestate::readFrame(const SokuLib::BattleManager &battleManager)
 {
     m_frame = battleManager.frameCount;
+}
+
+void Savestate::readCamera()
+{
+    m_camera = SokuLib::camera;
 }
 
 void Savestate::readInputs(const SokuLib::BattleManager &battleManager)
@@ -38,6 +44,8 @@ const unsigned int Savestate::getFrame() const
 
 void Savestate::restore()
 {
+    SokuLib::camera = m_camera;
+
     SokuLib::BattleManager battleManager = SokuLib::getBattleMgr();
     battleManager.frameCount = m_frame;
 
